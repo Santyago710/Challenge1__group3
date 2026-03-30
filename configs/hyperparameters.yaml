@@ -1,0 +1,15 @@
+env: "ALE/PrivateEye-v5"
+
+training:
+  total_timesteps: 2000000
+  learning_rate: 0.0001
+  batch_size: 64
+  buffer_size: 100000
+  learning_starts: 20000
+  gamma: 0.99
+  train_freq: 4
+  target_update_interval: 2000
+
+exploration:
+  exploration_fraction: 0.2
+  exploration_final_eps: 0.01
