@@ -51,7 +51,7 @@ for i, (lr, batch, buffer) in enumerate(experiments):
         tensorboard_log=f"./logs/exp_{i+1}/"
     )
 
-    model.learn(total_timesteps=200000)
+    model.learn(total_timesteps=1000000)
 
     os.makedirs("models", exist_ok=True)
     model.save(f"models/dqn_privateeye_exp{i+1}")

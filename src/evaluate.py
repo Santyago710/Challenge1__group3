@@ -1,60 +1,81 @@
 import gymnasium as gym
 import ale_py
-import os
+import sys
+import time
+import numpy as np
+
 from stable_baselines3 import DQN
 from stable_baselines3.common.atari_wrappers import AtariWrapper
 
+# Registrar entornos Atari
 gym.register_envs(ale_py)
 
 env_name = "ALE/PrivateEye-v5"
 
+
 def make_env():
-    env = gym.make(env_name)
+    env = gym.make(env_name, render_mode="human")
     env = AtariWrapper(env)
     return env
 
 
-models_folder = "models"
-results = []
+# Verificar argumento del modelo
+if len(sys.argv) < 2:
+    print("Uso: python src/evaluate.py <ruta_del_modelo>")
+    sys.exit()
 
-for model_file in os.listdir(models_folder):
+model_path = sys.argv[1]
 
-    if model_file.endswith(".zip"):
+print("Loading model:", model_path)
 
-        model_path = os.path.join(models_folder, model_file)
+env = make_env()
 
-        print("Evaluating:", model_file)
+model = DQN.load(model_path)
 
-        env = make_env()
+episodes = 5
+max_steps = 5000
 
-        model = DQN.load(model_path)
+episode_rewards = []
 
-        total_reward = 0
-        episodes = 10
+for ep in range(episodes):
 
-        for ep in range(episodes):
+    obs, _ = env.reset()
 
-            obs, _ = env.reset()
-            done = False
-            episode_reward = 0
+    done = False
+    total_reward = 0
+    step = 0
 
-            while not done:
+    print(f"\nStarting episode {ep+1}")
 
-                action, _ = model.predict(obs, deterministic=True)
-                obs, reward, terminated, truncated, _ = env.step(action)
+    while not done and step < max_steps:
 
-                episode_reward += reward
-                done = terminated or truncated
+        action, _ = model.predict(obs, deterministic=True)
 
-            total_reward += episode_reward
+        obs, reward, terminated, truncated, _ = env.step(action)
 
-        avg_reward = total_reward / episodes
+        total_reward += reward
+        done = terminated or truncated
 
-        results.append((model_file, avg_reward))
+        step += 1
 
-        print("Average reward:", avg_reward)
+        # Mostrar progreso cada 500 pasos
+        if step % 500 == 0:
+            print("Step:", step, "Reward:", total_reward)
 
+        # Renderizar solo cada 20 pasos para acelerar
+        if step % 20 == 0:
+            env.render()
+
+        # pequeño delay para estabilidad visual
+        time.sleep(0.003)
+
+    print(f"Episode {ep+1} finished")
+    print("Total reward:", total_reward)
+
+    episode_rewards.append(total_reward)
+
+env.close()
 
 print("\nRESULTS")
-for r in results:
-    print(r)
+print("Rewards:", episode_rewards)
+print("Average reward:", np.mean(episode_rewards))
