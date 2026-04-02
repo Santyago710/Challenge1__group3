@@ -31,8 +31,7 @@ challenge1__3/
 │   ├── experiments.py      # Runs multiple training experiments
 │   ├── evaluate.py         # Runs a trained agent in the environment
 │   ├── evaluate_models.py  # Evaluates all trained models
-│   └── plot_results.py     # Generates learning curves
-│
+│   
 ├── hyperparameters.yaml    # Training configuration
 │
 ├── requirements.txt
