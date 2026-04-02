@@ -221,24 +221,6 @@ You can view:
 
 ---
 
-# Generating Learning Curves
-
-To generate reward vs training step graphs:
-
-```bash
-python src/plot_results.py
-```
-
-This script produces:
-
-```
-learning_curve.png
-```
-
-which visualizes how the agent improves during training.
-
----
-
 # Hardware Used
 
 Training was performed on:
