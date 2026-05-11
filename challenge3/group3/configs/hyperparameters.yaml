@@ -1,0 +1,112 @@
+env: "ALE/PrivateEye-v5"
+
+# ─────────────────────────────────────────────────────────────
+# Challenge 3 – PPO Hyperparameter Search Space
+# Group 3 | ALE/PrivateEye-v5
+#
+# Budget constraint: 200_000 timesteps (reduced for compute speed)
+# Each experiment is repeated with 3 independent seeds.
+# Seeds used across all experiments: [42, 123, 777]
+#
+# Baseline config (exp1) uses the Group 3 starter values
+# from the challenge PDF. Subsequent experiments vary one
+# or two parameters at a time to isolate their effect.
+# ─────────────────────────────────────────────────────────────
+
+seeds: [42, 123, 777]
+
+experiments:
+
+  # ── Experiment 1 ── Baseline (PDF starter values for Group 3)
+  exp1:
+    total_timesteps: 500_000
+    learning_rate: 0.00025      # 2.5e-4
+    n_steps: 2048               # horizon T
+    n_epochs: 4                 # K epochs per rollout
+    batch_size: 64              # mini-batch size
+    gamma: 0.99                 # discount factor
+    gae_lambda: 0.95            # GAE λ
+    clip_range: 0.1             # clip epsilon ε
+    ent_coef: 0.02              # entropy coefficient c2 (high for sparse)
+    vf_coef: 0.5                # value-loss coefficient c1
+    max_grad_norm: 0.5          # gradient norm clip
+
+  # ── Experiment 2 ── Higher entropy (more exploration)
+  # PrivateEye is extremely sparse; pushing entropy harder
+  # may force the agent to discover non-zero rewards.
+  exp2:
+    total_timesteps: 500_000
+    learning_rate: 0.00025
+    n_steps: 2048
+    n_epochs: 4
+    batch_size: 64
+    gamma: 0.99
+    gae_lambda: 0.95
+    clip_range: 0.1
+    ent_coef: 0.05              # increased from 0.02 → 0.05
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+
+  # ── Experiment 3 ── Larger horizon (longer credit assignment)
+  # A bigger rollout window captures longer sequences before
+  # updating — useful when rewards are extremely delayed.
+  exp3:
+    total_timesteps: 500_000
+    learning_rate: 0.00025
+    n_steps: 4096               # doubled horizon
+    n_epochs: 4
+    batch_size: 64
+    gamma: 0.99
+    gae_lambda: 0.97            # slightly higher λ for longer horizon
+    clip_range: 0.1
+    ent_coef: 0.02
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+
+  # ── Experiment 4 ── Lower learning rate + more epochs
+  # More conservative updates; useful when the policy is
+  # fragile due to near-zero reward signal.
+  exp4:
+    total_timesteps: 500_000
+    learning_rate: 0.0001       # halved lr
+    n_steps: 2048
+    n_epochs: 6                 # more update passes per rollout
+    batch_size: 64
+    gamma: 0.99
+    gae_lambda: 0.95
+    clip_range: 0.1
+    ent_coef: 0.02
+    vf_coef: 0.5
+    max_grad_norm: 0.5
+
+  # ── Experiment 5 ── Wider clip + larger batch
+  # Allows bigger policy updates per step; trades stability
+  # for faster adaptation if any reward signal appears.
+  exp5:
+    total_timesteps: 500_000
+    learning_rate: 0.00025
+    n_steps: 2048
+    n_epochs: 4
+    batch_size: 128             # larger mini-batch
+    gamma: 0.99
+    gae_lambda: 0.95
+    clip_range: 0.2             # wider clip ε
+    ent_coef: 0.02
+    vf_coef: 1.0                # stronger value supervision
+    max_grad_norm: 0.5
+
+  # ── Experiment 6 ── Combined best guesses
+  # High entropy + longer horizon + conservative lr.
+  # Best candidate for PrivateEye given its extreme sparsity.
+  exp6:
+    total_timesteps: 500_000
+    learning_rate: 0.0001
+    n_steps: 4096
+    n_epochs: 4
+    batch_size: 64
+    gamma: 0.99
+    gae_lambda: 0.97
+    clip_range: 0.1
+    ent_coef: 0.05              # high entropy
+    vf_coef: 0.5
+    max_grad_norm: 0.5
