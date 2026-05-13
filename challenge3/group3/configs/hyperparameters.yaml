@@ -19,7 +19,7 @@ experiments:
 
   # ── Experiment 1 ── Baseline (PDF starter values for Group 3)
   exp1:
-    total_timesteps: 500_000
+    total_timesteps: 200_000
     learning_rate: 0.00025      # 2.5e-4
     n_steps: 2048               # horizon T
     n_epochs: 4                 # K epochs per rollout
@@ -35,7 +35,7 @@ experiments:
   # PrivateEye is extremely sparse; pushing entropy harder
   # may force the agent to discover non-zero rewards.
   exp2:
-    total_timesteps: 500_000
+    total_timesteps: 200_000
     learning_rate: 0.00025
     n_steps: 2048
     n_epochs: 4
@@ -51,7 +51,7 @@ experiments:
   # A bigger rollout window captures longer sequences before
   # updating — useful when rewards are extremely delayed.
   exp3:
-    total_timesteps: 500_000
+    total_timesteps: 200_000
     learning_rate: 0.00025
     n_steps: 4096               # doubled horizon
     n_epochs: 4
@@ -67,7 +67,7 @@ experiments:
   # More conservative updates; useful when the policy is
   # fragile due to near-zero reward signal.
   exp4:
-    total_timesteps: 500_000
+    total_timesteps: 200_000
     learning_rate: 0.0001       # halved lr
     n_steps: 2048
     n_epochs: 6                 # more update passes per rollout
@@ -83,7 +83,7 @@ experiments:
   # Allows bigger policy updates per step; trades stability
   # for faster adaptation if any reward signal appears.
   exp5:
-    total_timesteps: 500_000
+    total_timesteps: 200_000
     learning_rate: 0.00025
     n_steps: 2048
     n_epochs: 4
@@ -99,7 +99,7 @@ experiments:
   # High entropy + longer horizon + conservative lr.
   # Best candidate for PrivateEye given its extreme sparsity.
   exp6:
-    total_timesteps: 500_000
+    total_timesteps: 200_000
     learning_rate: 0.0001
     n_steps: 4096
     n_epochs: 4

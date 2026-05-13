@@ -6,24 +6,15 @@ import ale_py
 from stable_baselines3 import PPO
 from stable_baselines3.common.atari_wrappers import AtariWrapper
 from stable_baselines3.common.vec_env import DummyVecEnv
+from stable_baselines3.common.monitor import Monitor
 
 gym.register_envs(ale_py)
 
-# ─────────────────────────────────────────────────────────────
-# Argument parsing
-# Allows selecting which experiment and seed to run, e.g.:
-#   python train.py --exp exp1 --seed 42
-# ─────────────────────────────────────────────────────────────
 parser = argparse.ArgumentParser(description="Train PPO on ALE/PrivateEye-v5")
-parser.add_argument("--exp",  type=str, default="exp1",
-                    help="Experiment key from hyperparameters.yaml")
-parser.add_argument("--seed", type=int, default=42,
-                    help="Random seed for reproducibility")
+parser.add_argument("--exp",  type=str, default="exp1")
+parser.add_argument("--seed", type=int, default=42)
 args = parser.parse_args()
 
-# ─────────────────────────────────────────────────────────────
-# Load hyperparameters
-# ─────────────────────────────────────────────────────────────
 with open("configs/hyperparameters.yaml", "r") as f:
     config = yaml.safe_load(f)
 
@@ -37,25 +28,17 @@ print(f"  Seed       : {args.seed}")
 print(f"  Timesteps  : {params['total_timesteps']:,}")
 print(f"{'='*55}\n")
 
-# ─────────────────────────────────────────────────────────────
-# Environment factory
-# Uses SB3's AtariWrapper — identical preprocessing to Ch1:
-#   grayscale, resize 84x84, frame-skip 4, frame-stack 4
-# ─────────────────────────────────────────────────────────────
+# ── Monitor log dir (one per seed so rewards are tracked) ────
+log_dir = f"./logs/{args.exp}/seed_{args.seed}/"
+os.makedirs(log_dir, exist_ok=True)
+
 def make_env():
     env = gym.make(env_name)
     env = AtariWrapper(env)
+    env = Monitor(env, log_dir)   # ← logs episode rewards to TensorBoard
     return env
 
 env = DummyVecEnv([make_env])
-
-# ─────────────────────────────────────────────────────────────
-# PPO model
-# CnnPolicy uses the same convolutional architecture as DQN
-# in Challenge 1, ensuring a fair algorithmic comparison.
-# ─────────────────────────────────────────────────────────────
-log_dir = f"./logs/{args.exp}/seed_{args.seed}/"
-os.makedirs(log_dir, exist_ok=True)
 
 model = PPO(
     "CnnPolicy",
@@ -75,16 +58,8 @@ model = PPO(
     tensorboard_log=log_dir,
 )
 
-# ─────────────────────────────────────────────────────────────
-# Training
-# ─────────────────────────────────────────────────────────────
 model.learn(total_timesteps=params["total_timesteps"])
 
-# ─────────────────────────────────────────────────────────────
-# Save model
-# Naming convention mirrors Challenge 1:
-#   ppo_privateeye_{exp}_{seed}.zip
-# ─────────────────────────────────────────────────────────────
 os.makedirs("models", exist_ok=True)
 save_path = f"models/ppo_privateeye_{args.exp}_seed{args.seed}"
 model.save(save_path)
