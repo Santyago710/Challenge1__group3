@@ -34,6 +34,9 @@ challenge1__3/
 │   
 ├── hyperparameters.yaml    # Training configuration
 │
+│
+│── Paper/ # Folder of the documnent in IEEE format that contains all the development of the challenge 1 and 3
+├
 ├── requirements.txt
 │
 └── README.md
