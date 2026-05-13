@@ -24,7 +24,7 @@ python src/experiments.py --exp exp6 --seed 42
 | PPO trained models | `models/ppo_privateeye_exp{1-6}_seed{42,123,777}.zip` |
 | DQN trained models (Ch1) | `../../models/dqn_privateeye_exp{1-6}.zip` |
 
-## Comparative summary (DQN vs PPO — max 200 words)
+## Comparative summary (DQN vs PPO)
 
 ALE/PrivateEye-v5 is one of the hardest Atari environments due to its extremely
 sparse reward structure. Both DQN and PPO struggled to obtain meaningful rewards
