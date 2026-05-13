@@ -1,0 +1,7 @@
+exp,model,mean,std,min,max,all_rewards
+exp1,dqn_privateeye_exp1.zip,nan,nan,nan,nan,nan
+exp2,dqn_privateeye_exp2.zip,nan,nan,nan,nan,nan
+exp3,dqn_privateeye_exp3.zip,nan,nan,nan,nan,nan
+exp4,dqn_privateeye_exp4.zip,nan,nan,nan,nan,nan
+exp5,dqn_privateeye_exp5.zip,nan,nan,nan,nan,nan
+exp6,dqn_privateeye_exp6.zip,nan,nan,nan,nan,nan
